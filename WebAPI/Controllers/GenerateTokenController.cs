@@ -63,7 +63,7 @@ namespace FusionWebApi.Controllers
 
                 m.ErrorMessages.FusionCode = (int)EventCode.LoginSuccess;
                 m.ErrorMessages.FusionMessage = $"User {userName} successfully logged in to database: {database}!";
-                _logger.LogInformation($"User {userName} successfully logged in to database: {database}!");
+                _logger.LogWarning($"User {userName} successfully logged in to database: {database}!");
             }
             else
             {

@@ -46,6 +46,7 @@ namespace FusionWebApi
             services.AddLogging(loggingBuilder =>
             {
                 loggingBuilder.ClearProviders();
+                loggingBuilder.AddConsole();
                 loggingBuilder.AddNLog();
             });
 

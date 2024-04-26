@@ -34,10 +34,10 @@
 
   <ItemGroup>
     <Reference Include="Smead.RecordsManagement">
-      <HintPath>..\..\Resources\Assemblies\FusionAssemblies\Debug\net8.0\Smead.RecordsManagement.dll</HintPath>
+      <HintPath>..\..\Resources\Assemblies\FusionAssemblies\Release\net8.0\Smead.RecordsManagement.dll</HintPath>
     </Reference>
     <Reference Include="Smead.Security">
-      <HintPath>..\..\Resources\Assemblies\FusionAssemblies\Debug\net8.0\Smead.Security.dll</HintPath>
+      <HintPath>..\..\Resources\Assemblies\FusionAssemblies\Release\net8.0\Smead.Security.dll</HintPath>
     </Reference>
   </ItemGroup>
 

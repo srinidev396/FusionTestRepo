@@ -29,12 +29,12 @@ namespace FusionWebApi.Controllers
             _config = config;
             _logger = logger;
         }
-        [HttpGet]
-        public SecurityAccess AuthenticateUser(string userName, string passWord, string database)
+        [HttpPost]
+        public SecurityAccess AuthenticateUser(Login model)
         {
-            userName = userName == null ? string.Empty : userName;
-            passWord = passWord == null ? string.Empty : passWord;
-            database = database == null ? string.Empty : database;
+            var userName = model.Username == null ? string.Empty : model.Username;
+            var passWord = model.Password == null ? string.Empty : model.Password;
+            var database = model.Database == null ? string.Empty : model.Database;
             var m = new SecurityAccess(_config);
             m.ErrorMessages.TimeStamp = DateTime.Now;
             var token = string.Empty;
@@ -89,5 +89,12 @@ namespace FusionWebApi.Controllers
             m.ErrorMessages.TimeStamp = DateTime.Now;
             
         }
+    }
+    public class Login
+    {
+        public string Username { get; set; }
+        public string Password { get; set; }
+        public string Database { get; set; }
+       
     }
 }

@@ -39,6 +39,9 @@
     <Reference Include="Smead.Security">
       <HintPath>..\..\Resources\Assemblies\FusionAssemblies\Release\net8.0\Smead.Security.dll</HintPath>
     </Reference>
+    <Reference Include="TabFusionRMS.Resource">
+      <HintPath>..\..\FS-WebAccess\TabFusionRMS.ResourceCS\bin\Release\net8.0\TabFusionRMS.Resource.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>

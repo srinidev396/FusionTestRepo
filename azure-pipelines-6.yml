@@ -1,7 +1,7 @@
 trigger:
   branches:
     include:
-      - main
+      - 
 
 pool:
   name: Default
@@ -28,11 +28,11 @@ stages:
       - script: dotnet publish --configuration Release --output $(Build.ArtifactStagingDirectory)
         displayName: 'Publish Application'
 
-      - task: PublishBuildArtifacts@1
-        displayName: 'Publish Build Artifacts'
-        inputs:
-          pathToPublish: '$(Build.ArtifactStagingDirectory)'
-          artifactName: 'drop'  
+      # - task: PublishBuildArtifacts@1
+      #   displayName: 'Publish Build Artifacts'
+      #   inputs:
+      #     pathToPublish: '$(Build.ArtifactStagingDirectory)'
+      #     artifactName: 'drop'  
           
 - stage: PromoteToAzureArtifacts  
   displayName: 'Promote Build Artifacts'

@@ -39,18 +39,18 @@ stages:
           dir /b /s $(Build.ArtifactStagingDirectory)
         displayName: 'List files in Build.ArtifactStagingDirectory'
           
-- stage: PromoteToAzureArtifacts  
-  displayName: 'Promote Build Artifacts'
+- stage: DeployToAzureArtifacts  
+  displayName: 'Push Artifacts to Azure Artifacts'
   dependsOn: Build  
   jobs:
-  - job: Promote
-    displayName: 'Promote Artifacts'
+  - job: PushArtifacts
+    displayName: 'Push Artifacts'
     steps:
       - script: | # logging step
           echo " ** Contents of $(Build.ArtifactStagingDirectory):"
           dir /b /s $(Build.ArtifactStagingDirectory)
         displayName: 'List files in Build.ArtifactStagingDirectory'
-      - task: PublishBuildArtifacts@1  
-        inputs:
-          pathToPublish: '$(Build.ArtifactStagingDirectory)'
-          artifactName: 'drop-tabpipelines'  # Optional artifact name
+      # - task: PublishBuildArtifacts@1  
+      #   inputs:
+      #     pathToPublish: '$(Build.ArtifactStagingDirectory)'
+      #     artifactName: 'drop-tabpipelines'  # Optional artifact name

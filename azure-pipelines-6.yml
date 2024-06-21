@@ -41,6 +41,10 @@ stages:
   - job: Promote
     displayName: 'Promote Artifacts'
     steps:
+      - script: | # logging step
+          echo " ** Contents of $(Build.ArtifactStagingDirectory):"
+          dir /b /s $(Build.ArtifactStagingDirectory)
+        displayName: 'List files in Build.ArtifactStagingDirectory'
       - task: PublishBuildArtifacts@1  
         inputs:
           pathToPublish: '$(Build.ArtifactStagingDirectory)'

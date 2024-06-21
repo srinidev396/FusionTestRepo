@@ -76,32 +76,32 @@ stages:
         package: '$(Pipeline.Workspace)/drop'
     #     #deploymentMethod: 'zipDeploy'
   
-- stage: DeployQA
-  displayName: 'Deploy to QA'
-  dependsOn: Build
-  jobs:
-    - job: CDQA
-      displayName: 'Continuous Deployment to QA'
-      steps:
-      - download: current
-        artifact: drop
-        displayName: 'Download Build Artifacts'
+# - stage: DeployQA
+#   displayName: 'Deploy to QA'
+#   dependsOn: Build
+#   jobs:
+#     - job: CDQA
+#       displayName: 'Continuous Deployment to QA'
+#       steps:
+#       - download: current
+#         artifact: drop
+#         displayName: 'Download Build Artifacts'
 
-      - task: UseDotNet@2
-        displayName: 'Install .NET Core SDK'
-        inputs:
-          packageType: 'sdk'
-          version: '8.x'  
+#       - task: UseDotNet@2
+#         displayName: 'Install .NET Core SDK'
+#         inputs:
+#           packageType: 'sdk'
+#           version: '8.x'  
 
-      - task: AzureRmWebAppDeployment@4
-        #displayName: 'Azure Web App Deploy to QA'
-        displayName: 'Publish Artifact'
-        inputs:
-          ConnectionType: 'AzureRM'
-          azureSubscription: 'Azure_DevOps_Service_Connection'
-          appType: 'webApp'
-          WebAppName: 'webapp-apiqa-cc-fusionapi-001'
-          package: '$(Pipeline.Workspace)/drop'       
+#       - task: AzureRmWebAppDeployment@4
+#         #displayName: 'Azure Web App Deploy to QA'
+#         displayName: 'Publish Artifact'
+#         inputs:
+#           ConnectionType: 'AzureRM'
+#           azureSubscription: 'Azure_DevOps_Service_Connection'
+#           appType: 'webApp'
+#           WebAppName: 'webapp-apiqa-cc-fusionapi-001'
+#           package: '$(Pipeline.Workspace)/drop'       
   
         
     

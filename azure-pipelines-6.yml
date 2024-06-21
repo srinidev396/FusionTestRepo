@@ -33,6 +33,11 @@ stages:
         inputs:
           pathToPublish: '$(Build.ArtifactStagingDirectory)'
           artifactName: 'drop'  
+      
+      - script: | # logging step
+          echo " ** Contents of $(Build.ArtifactStagingDirectory):"
+          dir /b /s $(Build.ArtifactStagingDirectory)
+        displayName: 'List files in Build.ArtifactStagingDirectory'
           
 - stage: PromoteToAzureArtifacts  
   displayName: 'Promote Build Artifacts'

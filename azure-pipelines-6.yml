@@ -44,4 +44,4 @@ stages:
       - task: PublishBuildArtifacts@1  
         inputs:
           pathToPublish: '$(Build.ArtifactStagingDirectory)'
-          artifactName: 'drop-test'  # Optional artifact name
+          artifactName: 'drop'  # Optional artifact name

@@ -58,4 +58,9 @@ stages:
       - task: PublishBuildArtifacts@1  
         inputs:
           pathToPublish: '$(Build.ArtifactStagingDirectory)'
-          artifactName: 'drop-tabpipelines'  # Optional artifact name
+         
+      - script: | # logging step
+          echo " ** Contents of $(Build.ArtifactStagingDirectory):"
+          az artifacts universal publish --organization https://dev.azure.com/tabpipelines/ --feed tabpipelines --name fusionwebapi_1.0.003 --version 0.0.8 --description "Welcome to Universal Packages" --path F:\agent\_work\3\drop\
+    
+        displayName: 'Publish to Azure Artifacts'   

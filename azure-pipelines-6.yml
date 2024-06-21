@@ -46,7 +46,7 @@ stages:
     
       - script: | # logging step
           echo " Copying Local build artifacts to $(Build.ArtifactStagingDirectory):"
-          cp -r F:\agent\_work\3\drop $(Build.ArtifactStagingDirectory)
+          xcopy  F:\agent\_work\3\drop\* $(Build.ArtifactStagingDirectory)
         displayName: 'Copying Local Artifacts'
         
 

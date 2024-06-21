@@ -61,6 +61,8 @@ stages:
          
       - script: | # logging step
           echo " ** Contents of $(Build.ArtifactStagingDirectory):"
+          echo " Login with PAT token"
+          echo "System.AccessToken: $(System.AccessToken)"
           az artifacts universal publish --organization https://dev.azure.com/tabpipelines/ --feed tabpipelines --name fusionwebapi_1.0.003 --version 0.0.8 --description "Welcome to Universal Packages" --path F:\agent\_work\3\drop\
     
         displayName: 'Publish to Azure Artifacts'   

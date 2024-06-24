@@ -8,10 +8,6 @@ variables:
 - group: My variable Group
 
 steps:
-- task: UsePythonVersion@0
-  inputs:
-    versionSpec: '3.x'
-    addToPath: true
 
 - powershell: |
     $ErrorActionPreference = "Stop"

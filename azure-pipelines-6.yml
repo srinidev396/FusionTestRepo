@@ -48,15 +48,15 @@ steps:
    
 
    
-    # Write-Host "Publishing artifact..."
-    # az artifacts universal publish --organization $organization `
-    #                                --project $project `
-    #                                --feed $feed `
-    #                                --scope 'project' `
-    #                                --name $artifactName `
-    #                                --version $version `
-    #                                --path $pathToPublish `
-    #                                --description "fusionwebapi artifact"
+    Write-Host "Publishing artifact..."
+    az artifacts universal publish --organization $organization `
+                                   --project $project `
+                                   --feed $feed `
+                                   --scope 'project' `
+                                   --name $artifactName `
+                                   --version $version `
+                                   --path $pathToPublish `
+                                   --description "fusionwebapi artifact"
 
     
     Write-Host "Published artifact: $artifactName"
@@ -64,9 +64,9 @@ steps:
   env:
     pat: $(pat)
 
-- task: PublishPipelineArtifact@1
-  inputs:
-    targetPath: 'F:\agent\_work\3\drop'
-    artifact: 'fusionwebapi_artifact'
-    publishLocation: 'pipeline' 
-    displayName: 'Publish Artifact to default Location'
+# - task: PublishPipelineArtifact@1
+#   inputs:
+#     targetPath: 'F:\agent\_work\3\drop'
+#     artifact: 'fusionwebapi_artifact'
+#     publishLocation: 'pipeline' 
+#     displayName: 'Publish Artifact to default Location'

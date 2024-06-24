@@ -11,62 +11,35 @@ steps:
 - checkout: self
 
 - powershell: |
-    $ErrorActionPreference = "Stop"
-
-    $organization = "https://dev.azure.com/tabpipelines/"
-    $project = "TAB_API_POC"
-    $feed = "test-01"
-    $baseName = "fusionwebapi_1.0."
-    $version = "0.0.6"  
-
+    $ErrorActionPreference = "Stop"  
    
-    $dateTime = Get-Date -Format "yyyyMMddHHmm"
-
-   
-    $artifactName = $baseName + "003" + "_" + $dateTime
-
-   
-    $pathToPublish = "$(Build.ArtifactStagingDirectory)"
+  
+    
 
     $pat = "${env:pat}"
 
-    if (-not $pat) {
-        Write-Error "PAT not found. Ensure the PAT variable is set correctly in the pipeline."
-        exit 1
-    }
+    
+    
 
+    
    
-    
-
-    
-    Write-Host "Configuring default organization and project..."
     az devops configure --defaults organization=$organization project=$project
 
     $env:AZURE_DEVOPS_EXT_PAT = $pat   
     
 
-   
+    
+
 
    
     Write-Host "Publishing artifact..."
-    az artifacts universal publish --organization $organization `
-                                   --project $project `
-                                   --feed $feed `
+    az artifacts universal publish --organization 'https://dev.azure.com/tabpipelines/' `
+                                   --project 'TAB_API_POC' `
+                                   --feed 'test-01' `
                                    --scope 'project' `
-                                   --name $artifactName `
-                                   --version $version `
-                                   --path $pathToPublish `
-                                   --description "fusionwebapi artifact"
+                                   --name 'fusionwebapi_1.0.003' `
+                                   --version 0.0.1 `
+                                   --path 'F:\\agent\\_work\\3\\drop"' `
+                                   --description 'fusionwebapi artifact'
 
-    
-    Write-Host "Published artifact: $artifactName"
-  displayName: 'Publish Artifact'
-  env:
-    pat: $(pat)
 
-# - task: PublishPipelineArtifact@1
-#   inputs:
-#     targetPath: 'F:\agent\_work\3\drop'
-#     artifact: 'fusionwebapi_artifact'
-#     publishLocation: 'pipeline' 
-#     displayName: 'Publish Artifact to default Location'

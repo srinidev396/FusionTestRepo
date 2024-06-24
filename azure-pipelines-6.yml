@@ -23,7 +23,7 @@ steps:
     --name my-first-package
     --version 0.0.1
     --description "Welcome to Universal Packages"
-    --path .
+    --path 'F:\agent\_work\3\drop'
   displayName: 'Publish Artifact'
 
     

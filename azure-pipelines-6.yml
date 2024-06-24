@@ -12,26 +12,9 @@ steps:
 
 - powershell: |
     $ErrorActionPreference = "Stop"  
-   
-  
-    
-
     $pat = "${env:pat}"
-
-    
-    
-
-    
-   
     az devops configure --defaults organization=$organization project=$project
-
-    $env:AZURE_DEVOPS_EXT_PAT = $pat   
-    
-
-    
-
-
-   
+    $env:AZURE_DEVOPS_EXT_PAT = $pat
     Write-Host "Publishing artifact..."
     az artifacts universal publish --organization 'https://dev.azure.com/tabpipelines/' `
                                    --project 'TAB_API_POC' `
@@ -41,5 +24,22 @@ steps:
                                    --version 0.0.1 `
                                    --path 'F:\\agent\\_work\\3\\drop"' `
                                    --description 'fusionwebapi artifact'
+  displayName: 'Publish Artifact'
+
+    
+    
+
+    
+   
+    
+
+    
+    
+
+    
+
+
+   
+   
 
 

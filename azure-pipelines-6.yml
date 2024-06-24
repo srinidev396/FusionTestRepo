@@ -16,14 +16,14 @@ steps:
     az devops configure --defaults organization=$organization project=$project
     $env:AZURE_DEVOPS_EXT_PAT = $pat
     Write-Host "Publishing artifact..."
-    az artifacts universal publish --organization 'https://dev.azure.com/tabpipelines/' `
-                                   --project 'TAB_API_POC' `
-                                   --feed 'test-01' `
-                                   --scope 'project' `
-                                   --name 'fusionwebapi_1.0.003' `
-                                   --version 0.0.1 `                                  
-                                   --description 'fusionwebapi artifact' `
-                                   --path 'F:\\agent\\_work\\3\\drop'
+    az artifacts universal publish
+    --organization https://dev.azure.com/tabpipelines/
+    --feed test-01
+    --scope project
+    --name my-first-package
+    --version 0.0.1
+    --description "Welcome to Universal Packages"
+    --path .
   displayName: 'Publish Artifact'
 
     

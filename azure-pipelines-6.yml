@@ -1,68 +1,72 @@
 trigger:
-  branches:
-    include:
-      - 
+- main
 
 pool:
   name: Default
 
-stages:
-- stage: Build
-  displayName: 'Build, Test and Publish Artifact'
-  jobs:
-  - job: CI
-    displayName: 'Continuous Integration'
-    steps:
-      - task: UseDotNet@2
-        displayName: 'Install .NET Core sdk'
-        inputs:
-          packageType: 'sdk'
-          version: '8.x'
+variables:
+- group: My variable Group
 
-      - script: dotnet restore
-        displayName: 'Restore dependencies'
+steps:
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '3.x'
+    addToPath: true
 
-      - script: dotnet build --configuration Release
-        displayName: 'Build application'
+- powershell: |
+    $ErrorActionPreference = "Stop"
 
-      - script: dotnet publish --configuration Release --output $(Build.ArtifactStagingDirectory)
-        displayName: 'Publish Application'
+    $organization = "https://dev.azure.com/tabpipelines/"
+    $project = "TAB_API_POC"
+    $feed = "test-01"
+    $baseName = "fusionwebapi_1.0."
+    $version = "0.0.6"  
 
-      - task: PublishBuildArtifacts@1
-        displayName: 'Publish Build Artifacts'
-        inputs:
-          pathToPublish: '$(Build.ArtifactStagingDirectory)'
-          artifactName: 'drop'  
-      
-     
-          
-- stage: DeployToAzureArtifacts  
-  displayName: 'Push Artifacts from local to Azure Artifacts'
-  dependsOn: Build  
-  jobs:
-  - job: PushLocalArtifacts
-    displayName: 'Push Local Artifacts'
-    steps:
+   
+    $dateTime = Get-Date -Format "yyyyMMddHHmm"
+
+   
+    $artifactName = $baseName + "003" + "_" + $dateTime
+
+   
+    $pathToPublish = "$(Build.ArtifactStagingDirectory)"
+
+    $pat = "${env:pat}"
+
+    if (-not $pat) {
+        Write-Error "PAT not found. Ensure the PAT variable is set correctly in the pipeline."
+        exit 1
+    }
+
+   
+    $env:AZURE_DEVOPS_EXT_PAT = $pat
+
     
-      - script: | # logging step
-          echo " Copying Local build artifacts to $(Build.ArtifactStagingDirectory):"
-          xcopy  F:\agent\_work\3\drop\* $(Build.ArtifactStagingDirectory)
-        displayName: 'Copying Local Artifacts'
-        
+    Write-Host "Configuring default organization and project..."
+    az devops configure --defaults organization=$organization project=$project
 
-      - script: | # logging step
-          echo " ** Contents of $(Build.ArtifactStagingDirectory):"
-          dir /b /s $(Build.ArtifactStagingDirectory)
-        displayName: 'List files in Build.ArtifactStagingDirectory'
-        
-      - task: PublishBuildArtifacts@1  
-        inputs:
-          pathToPublish: '$(Build.ArtifactStagingDirectory)'
-         
-      - script: | # logging step
-          az extension set --allow-preview=false
-          echo " Login with PAT token"
-          echo "System.AccessToken: $(System.AccessToken)"
-          az artifacts universal publish --organization https://dev.azure.com/tabpipelines/ --feed tabpipelines --name fusionwebapi_1.0.003 --version 0.0.8 --description "Welcome to Universal Packages" --path F:\agent\_work\3\drop\
     
-        displayName: 'Publish to Azure Artifacts'   
+    Write-Host "Checking if user is authenticated..."
+    az devops user show
+
+    if ($LASTEXITCODE -ne 0) {
+        Write-Error "Authentication failed. Ensure the PAT has the correct permissions."
+        exit 1
+    }
+
+   
+    Write-Host "Publishing artifact..."
+    az artifacts universal publish --organization $organization `
+                                   --project $project `
+                                   --feed $feed `
+                                   --scope 'project' `
+                                   --name $artifactName `
+                                   --version $version `
+                                   --path $pathToPublish `
+                                   --description "fusionwebapi artifact"
+
+    
+    Write-Host "Published artifact: $artifactName"
+  displayName: 'Publish Artifact'
+  env:
+    pat: $(pat)

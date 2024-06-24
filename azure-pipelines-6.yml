@@ -21,9 +21,9 @@ steps:
                                    --feed 'test-01' `
                                    --scope 'project' `
                                    --name 'fusionwebapi_1.0.003' `
-                                   --version 0.0.1 `
-                                   --path 'F:\\agent\\_work\\3\\drop"' `
-                                   --description 'fusionwebapi artifact'
+                                   --version 0.0.1 `                                  
+                                   --description 'fusionwebapi artifact' `
+                                   --path 'F:\\agent\\_work\\3\\drop'
   displayName: 'Publish Artifact'
 
     

@@ -35,20 +35,16 @@ steps:
     }
 
    
-    $env:AZURE_DEVOPS_EXT_PAT = $pat
+    
 
     
     Write-Host "Configuring default organization and project..."
     az devops configure --defaults organization=$organization project=$project
 
+    $env:AZURE_DEVOPS_EXT_PAT = $pat   
     
-    Write-Host "Checking if user is authenticated..."
-    az devops user show
 
-    if ($LASTEXITCODE -ne 0) {
-        Write-Error "Authentication failed. Ensure the PAT has the correct permissions."
-        exit 1
-    }
+   
 
    
     Write-Host "Publishing artifact..."

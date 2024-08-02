@@ -144,10 +144,17 @@ namespace FusionWebApi.Models
                 sql = $"SELECT {columns} FROM {model.TableName} WHERE {model.FieldName} = '{model.keyValue}'";
             }
 
-            var conn = pass.Connection();
-            var cmd = new SqlCommand(sql, conn);
-            var adp = new SqlDataAdapter(cmd);
-            adp.Fill(table);
+            using (var conn = new SqlConnection(passport.ConnectionString))
+            {
+                conn.Open();
+                using (var cmd = new SqlCommand(sql, conn))
+                {
+                    using (var adp = new SqlDataAdapter(cmd))
+                    {
+                        adp.Fill(table);
+                    }
+                }    
+            }
             for (int j = 0; j < table.Rows.Count; j++)
             {
                 for (int i = 0; i < listofcolumns.Count; i++)
@@ -157,8 +164,6 @@ namespace FusionWebApi.Models
                 listofrows.Add(beforedata);
                 beforedata = string.Empty;
             }
-
-
             return listofrows;
         }
         private List<string> GetBeforeDataTrimmedEdit(List<PostColumns> lst, Passport pass, Parameters param)
@@ -206,25 +211,17 @@ namespace FusionWebApi.Models
         }
         public string EditRecordByColumn(UIPostModel Ed)
         {
-            //var param = new Parameters(Ed.TableName, passport);
-            //param.Scope = ScopeEnum.Table;
-            //param.KeyValue = Ed.keyValue;
-            //param.NewRecord = false;
-            //param.KeyField = Ed.FieldName;
-            //param.BeforeData = "";
             if (passport.CheckPermission(Ed.TableName, SecureObject.SecureObjectType.Table, Permissions.Permission.Edit))
             {
             var FieldNameType = DatabaseSchema.GetTableSchema(Ed.TableName, passport).ListOfColumns.Where(a => a.ColumnName.ToLower() == Ed.FieldName.ToLower()).FirstOrDefault().DataType;
             var ListbeforeDataTrim = GetBeforeDataTrimmedEditBycolumn(Ed, passport, FieldNameType);
             var data = DataFieldValues(Ed.PostRow);
             return Query.UpdateRecordsByColumn(Ed.keyValue, Ed.FieldName, Ed.TableName, passport, data, Ed.IsMultyupdate, FieldNameType, ListbeforeDataTrim);
-            
             }
             else
             {
                 return "nopermission";
             }
-
         }
         private List<FieldValue> DataFieldValues(List<PostColumns> ListOfcolumns)
         {

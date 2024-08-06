@@ -44,8 +44,11 @@ namespace FusionWebApi.Controllers
             }
             catch (Exception ex)
             {
-                CatchExceptions(m, ex);
                 _logger.LogError($"{ex.Message} Username: {userName} DatabaseName {database}");
+                return CatchExceptions(m, ex);
+                //m.ErrorMessages.FusionCode = (int)EventCode.LoginFail;
+                //m.ErrorMessages.FusionMessage = ex.Message;
+
             }
 
             var jw = new JwtService(m);
@@ -75,7 +78,7 @@ namespace FusionWebApi.Controllers
             return m;
         }
         //written to prevent sensitive data exposure to the swagger UI Moti Mashiah.
-        private void CatchExceptions(SecurityAccess m, Exception ex)
+        private SecurityAccess CatchExceptions(SecurityAccess m, Exception ex)
         {
             if (ex.Message.Contains("nLogin failed for user 'sa'"))
             {
@@ -85,9 +88,13 @@ namespace FusionWebApi.Controllers
             {
                 m.ErrorMessages.Message = "";
             }
+            else 
+            {
+                m.ErrorMessages.FusionMessage = ex.Message; 
+            }
             m.ErrorMessages.Code = ex.HResult;
             m.ErrorMessages.TimeStamp = DateTime.Now;
-            
+            return m;
         }
     }
     public class Login

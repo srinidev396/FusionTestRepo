@@ -305,7 +305,7 @@ namespace FusionWebApi.Models
                 param.Paged = true;
                 param.PageIndex = pageNumber;
                 query.FillData(param);
-                v.TotalRowsQuery = TotalQueryRowCount(param.TotalRowsQuery, passport.Connection());
+                v.TotalRowsQuery = TotalQueryRowCount(param.TotalRowsQuery, passport.ConnectionString);
                 v.RowsPerPage = RowPerpage(passport, param.ViewId);
                 v.TableName = param.TableName;
                 v.ViewName = param.ViewName;
@@ -479,20 +479,24 @@ namespace FusionWebApi.Models
             return true;
         }
 
-        private static int TotalQueryRowCount(string sql, SqlConnection conn)
+        private static int TotalQueryRowCount(string sql, string connectionStr)
         {
-            using (var cmd = new SqlCommand("SELECT COUNT(*) " + Strings.Right(sql, sql.Length - Strings.InStr(sql, " FROM ", CompareMethod.Text)), conn))
+            using (var conn = new SqlConnection(connectionStr))
             {
-                cmd.CommandTimeout = 60;
+                conn.Open();
+                using (var cmd = new SqlCommand("SELECT COUNT(*) " + Strings.Right(sql, sql.Length - Strings.InStr(sql, " FROM ", CompareMethod.Text)), conn))
+                {
+                    cmd.CommandTimeout = 60;
 
-                try
-                {
-                    return (int)(cmd.ExecuteScalar());
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine(ex.Message);
-                    return 0;
+                    try
+                    {
+                        return (int)(cmd.ExecuteScalar());
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine(ex.Message);
+                        return 0;
+                    }
                 }
             }
         }

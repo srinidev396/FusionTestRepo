@@ -331,6 +331,92 @@ namespace FusionWebApi.Models
 
             return v;
         }
+
+        public Viewmodel SearchViewData(UIPostModel props)
+        {
+            var v = new Viewmodel();
+            var query = new Query(passport);
+            var param = new Parameters(props.ViewId, passport);
+            props.TableName = param.TableName;
+
+            DatabaseSchema.GetColumntype(passport, props);
+
+            if (passport.CheckPermission(param.ViewName, Smead.Security.SecureObject.SecureObjectType.View, Permissions.Permission.View))
+            {
+                param.Paged = true;
+                param.PageIndex = props.PageNumber;
+                if(props.PostRow.Count > 0)
+                {
+                    param.QueryType = queryTypeEnum.AdvancedFilter;
+                    param.FilterList = CreateQuery(props);
+                }
+                query.FillData(param);
+                v.TotalRowsQuery = TotalQueryRowCount(param.TotalRowsQuery, passport.ConnectionString);
+                v.RowsPerPage = RowPerpage(passport, param.ViewId);
+                v.TableName = param.TableName;
+                v.ViewName = param.ViewName;
+                v.Viewid = param.ViewId;
+                v.PageNumber = props.PageNumber;
+
+                v.ListOfHeaders = BuildNewTableHeaderData(param);
+                v.ListOfDatarows = Buildrows(param);
+                int RowperPage = v.RowsPerPage == 0 ? 100 : v.RowsPerPage;
+                v.RowsPerPage = RowperPage;
+                decimal totpages = (decimal)v.TotalRowsQuery / RowperPage;
+                v.TotalPages = Math.Ceiling(totpages);
+                if (props.PageNumber > v.TotalPages)
+                {
+                    v.ErrorMessages.FusionCode = (int)EventCode.WrongValue;
+                    v.ErrorMessages.FusionMessage = $"That page number {props.PageNumber} is incorrect";
+                }
+            }
+            else
+            {
+                v.ErrorMessages.FusionCode = (int)EventCode.insufficientpermissions;
+                v.ErrorMessages.FusionMessage = "Insufficient permission";
+            }
+
+            return v;
+        }
+        private List<FieldValue> CreateQuery(UIPostModel props)
+        {
+            var list = new List<FieldValue>();
+            if (!(props.PostRow == null))
+            {
+                foreach (var row in props.PostRow)
+                {
+                    var fv = new FieldValue(row.ColumnName, row.DataTypeFullName);
+                    if (!string.IsNullOrEmpty(row.Operator.Trim()))
+                    {
+                        fv.Operate = row.Operator;
+                        if (string.IsNullOrEmpty(row.Value))
+                        {
+                            fv.value = "";
+                        }
+                        else if (row.DataTypeFullName == "System.DateTime")
+                        {
+                            if (row.Value.Contains("|"))
+                            {
+                                var dt = row.Value.Split('|');
+                                string checkFieldDateStart = DateTime.Parse(dt[0].ToString()).ToString();
+                                string checkFieldDateEnd = DateTime.Parse(dt[1].ToString()).ToString();
+                                fv.value = string.Format("{0}|{1}", checkFieldDateStart, checkFieldDateEnd);
+                            }
+                            else
+                            {
+                                fv.value = DateTime.Parse(row.Value.ToString()).ToString();
+                            }
+                        }
+                        else
+                        {
+                            fv.value = row.Value;
+                        }
+                        list.Add(fv);
+                    }
+                }
+            }
+            return list;
+        }
         private int RowPerpage(Passport pass, int viewid)
         {
             var conn = pass.Connection();

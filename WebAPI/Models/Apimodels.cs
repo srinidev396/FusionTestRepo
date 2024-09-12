@@ -15,6 +15,8 @@ namespace FusionWebApi.Models
             PostMultiRows = new List<List<PostColumns>>();
         }
         [Required]
+        public int ViewId { get; set; }
+        public int PageNumber { get; set; }
         public string TableName { get; set; }
         public string keyValue { get; set; }
         public string FieldName { get; set; }
@@ -30,6 +32,7 @@ namespace FusionWebApi.Models
         public string ColumnName { get; set; }
         [HiddenInput]
         public string DataTypeFullName { get; set; }
+        public string Operator { get; set; }
     }
 
     public class Viewmodel

@@ -460,6 +460,48 @@ namespace FusionWebApi.Controllers
 
             return getview;
         }
+        [HttpPost]
+        [Route("SearchViewData")]
+        public async Task<Viewmodel> SearchViewData(UIPostModel props)
+        {
+            var getview = new Viewmodel();
+            getview.ErrorMessages.TimeStamp = DateTime.Now;
+            var m = new SecurityAccess(_config);
+            var passport = new Passport();
+            try
+            {
+                passport = m.GetPassport(User.Identity.Name);
+                var v = new RecordsActions(passport);
+                if (props.ViewId == 0)
+                {
+                    getview.ErrorMessages.FusionCode = (int)EventCode.WrongValue;
+                    getview.ErrorMessages.FusionMessage = $"Viewid cannot be 0";
+                }
+                else if(props.PostRow.Count == 0)
+                { 
+                    getview.ErrorMessages.FusionCode = (int)EventCode.WrongValue;
+                    getview.ErrorMessages.FusionMessage = $"PostRow object can't be 0";
+                }
+                else
+                {
+                    getview = await Task.Run(() => v.SearchViewData(props));
+                }
+            }
+
+            catch (Exception ex)
+            {
+                if (ex.Message.Contains("position 0"))
+                {
+                    getview.ErrorMessages.Code = 0;
+                    getview.ErrorMessages.Message = "";
+                    getview.ErrorMessages.FusionCode = (int)EventCode.WrongValue;
+                    getview.ErrorMessages.FusionMessage = $"View {props.ViewId} is not found";
+                }
+                _logger.LogError($"{ex.Message} DataBaseName: {passport.DatabaseName} UserName: {passport.UserName}");
+            }
+
+            return getview;
+        }
 
     }
 

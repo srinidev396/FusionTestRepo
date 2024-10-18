@@ -33,9 +33,10 @@ namespace FusionWebApi.Controllers
             var model = new UserViews();
             model.ErrorMessages.TimeStamp = DateTime.Now;
             var m = new SecurityAccess(_config);
-            var passport = m.GetPassport(User.Identity.Name);
+            var passport = new Passport();
             try
             {
+                passport = m.GetPassport(User.Identity.Name);
                 model.listOfviews = await Task.Run(() => Navigation.GetAllUserViews(passport));
             }
             catch (Exception ex)
@@ -54,9 +55,10 @@ namespace FusionWebApi.Controllers
             var model = new SchemaModel();
             model.ErrorMessages.TimeStamp = DateTime.Now;
             var m = new SecurityAccess(_config);
-            var passport = m.GetPassport(User.Identity.Name);
+            var passport = new Passport();
             try
             {
+                passport = m.GetPassport(User.Identity.Name);
                 model = await Task.Run(() => DatabaseSchema.ReturnDbSchema(passport));
             }
             catch (Exception ex)
@@ -74,9 +76,10 @@ namespace FusionWebApi.Controllers
             TablesSchema model = new TablesSchema();
             model.ErrorMessages.TimeStamp = DateTime.Now;
             var m = new SecurityAccess(_config);
-            var passport = m.GetPassport(User.Identity.Name);
+            var passport = new Passport();
             try
             {
+                passport = m.GetPassport(User.Identity.Name);
                 model = await Task.Run(() => DatabaseSchema.GetTableSchema(TableName, passport));
             }
             catch (Exception ex)
@@ -101,9 +104,10 @@ namespace FusionWebApi.Controllers
                 return model;
             }
             var m = new SecurityAccess(_config);
-            var passport = m.GetPassport(User.Identity.Name);
+            var passport = new Passport();
             try
             {
+                passport = m.GetPassport(User.Identity.Name);
                 var checkcolumns = await Task.Run(() => DatabaseSchema.GetColumntype(passport, userdata));
                 if (checkcolumns != "true")
                 {
@@ -155,10 +159,11 @@ namespace FusionWebApi.Controllers
                 return model;
             }
             var m = new SecurityAccess(_config);
-            var passport = m.GetPassport(User.Identity.Name);
+            var passport = new Passport();
             var start = DateTime.Now;
             try
             {
+                passport = m.GetPassport(User.Identity.Name);
                 var checkcolumns = await Task.Run(() => DatabaseSchema.GetColumntypeMulti(passport, userdata));
                 if (checkcolumns != "true")
                 {
@@ -213,9 +218,10 @@ namespace FusionWebApi.Controllers
                 return model;
             }
             var m = new SecurityAccess(_config);
-            var passport = m.GetPassport(User.Identity.Name);
+            var passport = new Passport();
             try
             {
+                passport = m.GetPassport(User.Identity.Name);
                 var checkcolumns = await Task.Run(() => DatabaseSchema.GetColumntype(passport, userdata));
                 if (checkcolumns != "true")
                 {
@@ -268,9 +274,10 @@ namespace FusionWebApi.Controllers
             }
 
             var m = new SecurityAccess(_config);
-            var passport = m.GetPassport(User.Identity.Name);
+            var passport = new Passport();
             try
             {
+                passport = m.GetPassport(User.Identity.Name);
                 var checkcolumns = await Task.Run(() => DatabaseSchema.GetColumntype(passport, userdata));
                 if (checkcolumns != "true")
                 {
@@ -322,22 +329,23 @@ namespace FusionWebApi.Controllers
             //to use this method the developer must have an account with add\edit permission
             //so first we check for permissions
             var m = new SecurityAccess(_config);
-            var passport = m.GetPassport(User.Identity.Name);
-            if (!passport.CheckPermission(userdata.TableName, SecureObject.SecureObjectType.Table, Permissions.Permission.Edit) ||
-                !passport.CheckPermission(userdata.TableName, SecureObject.SecureObjectType.Table, Permissions.Permission.Add))
-            {
-                model.ErrorMessages.FusionCode = (int)EventCode.insufficientpermissions;
-                model.ErrorMessages.FusionMessage = "Insufficient permissions to modify or add data.";
-                return model;
-            }
-            if (userdata.PostRow.Count == 0)
-            {
-                model.ErrorMessages.FusionCode = (int)EventCode.NoColumn;
-                model.ErrorMessages.FusionMessage = "No column to post";
-                return model;
-            }
+            var passport = new Passport();
             try
             {
+                passport = m.GetPassport(User.Identity.Name);
+                if (!passport.CheckPermission(userdata.TableName, SecureObject.SecureObjectType.Table, Permissions.Permission.Edit) ||
+                    !passport.CheckPermission(userdata.TableName, SecureObject.SecureObjectType.Table, Permissions.Permission.Add))
+                {
+                    model.ErrorMessages.FusionCode = (int)EventCode.insufficientpermissions;
+                    model.ErrorMessages.FusionMessage = "Insufficient permissions to modify or add data.";
+                    return model;
+                }
+                if (userdata.PostRow.Count == 0)
+                {
+                    model.ErrorMessages.FusionCode = (int)EventCode.NoColumn;
+                    model.ErrorMessages.FusionMessage = "No column to post";
+                    return model;
+                }
                 var checkcolumns = await Task.Run(() => DatabaseSchema.GetColumntype(passport, userdata));
                 if (checkcolumns != "true")
                 {
@@ -401,10 +409,10 @@ namespace FusionWebApi.Controllers
 
             var model = new ErrorMessages();
             var m = new SecurityAccess(_config);
-            var passport = m.GetPassport(User.Identity.Name);
+            var passport = new Passport();
             try
             {
-
+                passport = m.GetPassport(User.Identity.Name);
                 throw new ArgumentException("This is an intentional test exception by FusionRMS");
             }
             catch (Exception ex)
@@ -422,10 +430,11 @@ namespace FusionWebApi.Controllers
             var getview = new Viewmodel();
             getview.ErrorMessages.TimeStamp = DateTime.Now;
             var m = new SecurityAccess(_config);
-            var passport = m.GetPassport(User.Identity.Name);
-            var v = new RecordsActions(passport);
+            var passport = new Passport();
             try
             {
+                passport = m.GetPassport(User.Identity.Name);
+                var v = new RecordsActions(passport);
                 if (viewid == 0 || pageNumber == 0)
                 {
                     getview.ErrorMessages.FusionCode = (int)EventCode.WrongValue;
@@ -445,6 +454,48 @@ namespace FusionWebApi.Controllers
                     getview.ErrorMessages.Message = "";
                     getview.ErrorMessages.FusionCode = (int)EventCode.WrongValue;
                     getview.ErrorMessages.FusionMessage = $"View {viewid} is not found";
+                }
+                _logger.LogError($"{ex.Message} DataBaseName: {passport.DatabaseName} UserName: {passport.UserName}");
+            }
+
+            return getview;
+        }
+        [HttpPost]
+        [Route("SearchViewData")]
+        public async Task<Viewmodel> SearchViewData(UIPostModel props)
+        {
+            var getview = new Viewmodel();
+            getview.ErrorMessages.TimeStamp = DateTime.Now;
+            var m = new SecurityAccess(_config);
+            var passport = new Passport();
+            try
+            {
+                passport = m.GetPassport(User.Identity.Name);
+                var v = new RecordsActions(passport);
+                if (props.ViewId == 0)
+                {
+                    getview.ErrorMessages.FusionCode = (int)EventCode.WrongValue;
+                    getview.ErrorMessages.FusionMessage = $"Viewid cannot be 0";
+                }
+                else if(props.PostRow.Count == 0)
+                { 
+                    getview.ErrorMessages.FusionCode = (int)EventCode.WrongValue;
+                    getview.ErrorMessages.FusionMessage = $"PostRow object can't be 0";
+                }
+                else
+                {
+                    getview = await Task.Run(() => v.SearchViewData(props));
+                }
+            }
+
+            catch (Exception ex)
+            {
+                if (ex.Message.Contains("position 0"))
+                {
+                    getview.ErrorMessages.Code = 0;
+                    getview.ErrorMessages.Message = "";
+                    getview.ErrorMessages.FusionCode = (int)EventCode.WrongValue;
+                    getview.ErrorMessages.FusionMessage = $"View {props.ViewId} is not found";
                 }
                 _logger.LogError($"{ex.Message} DataBaseName: {passport.DatabaseName} UserName: {passport.UserName}");
             }
